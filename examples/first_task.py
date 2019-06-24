@@ -1,5 +1,5 @@
-from spruce.task import task, App
-from spruce.worker import Worker
+from taskbay.task import task, App
+from taskbay.worker import Worker
 
 if __name__ == '__main__':
 
