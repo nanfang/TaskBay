@@ -6,12 +6,13 @@ CREATE TABLE task (
     state SMALLINT NOT NULL DEFAULT 0,
     start_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     added_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
-    last_update_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    last_update_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     retry_count SMALLINT NOT NULL DEFAULT 0,
     queue_name VARCHCAR(1000),
     machine VARCHCAR(1000),
     process_id INT,
-    parent_task_id BIGINT
+    parent_task_id BIGINT,
+    tag VARCHCAR(1000) -- for event handling
 );
 
 CREATE TABLE task_params (
