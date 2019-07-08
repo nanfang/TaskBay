@@ -4,6 +4,7 @@ CREATE TABLE task_event (
     task_id BIGINT NOT NULL,
     task_name VARCHCAR(1000) NOT NULL,
     event_name VARCHCAR(1000) NOT NULL,
-    event_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    result VARCHCAR(2000) NOT NULL, -- only for completed event
+    event_at TIMESTAMP WITHOUT TIME ZONE NOT NULL,
     tag  VARCHCAR(1000)
 )
