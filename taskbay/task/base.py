@@ -2,6 +2,7 @@ import os
 import datetime
 import logging
 import socket
+
 import psutil
 from datetime import datetime, timedelta
 
@@ -13,6 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 # FIXME: current version is coupled with Celery, need to decouple it when I figure out a solution
+# TODO: add UT
 class _Task(Task):
     """task accept a process_event attribute as the celery task name
     to deliver event
@@ -20,7 +22,6 @@ class _Task(Task):
     abstract = True
 
     # suppress celery result backend. the COMPLETE event will carry the result (less than 2000 bytes)
-    # TODO: support extra storage for larger result than 2000 bytes
     ignore_result = True
 
     # suppress celery task chain. the task chain (workflow) will be done by event driven architecture
@@ -97,9 +98,6 @@ class _Task(Task):
         pass
 
     def _emit_event(self, event_name, event_at, result=None, error=None, time_for_retry=None):
-        if self.task_id is None:
-            # this only happen when we call the task function directly
-            return
         event = TaskEvent(
             task_id=self.task_id,
             task_name=self.task_name,
@@ -107,13 +105,11 @@ class _Task(Task):
             event_at=event_at,
             machine=self.machine,
             tag=self.request.tag,
-            result=result, #TODO handle long result
-            error=self._format_and_truncate_error(error),
+            result=result,
+            error=error,
             time_for_retry=time_for_retry
         )
-
-        # TODO send event to event bus and other listeners
-        pass
+        self.app.notify(event)
 
     @property
     def task_id(self):
@@ -136,11 +132,6 @@ class _Task(Task):
     @property
     def is_autoretry(self):
         return getattr(self, 'autoretry', False)
-
-    @staticmethod
-    def _format_and_truncate_error(error):
-        # TODO
-        return error
 
     @staticmethod
     def _runtime_stats():
