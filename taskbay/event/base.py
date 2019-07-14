@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 
+# TODO: Think: should it be state change event? if yes, how to model it? do we need a previous state
 class TaskEvent(object):
 
     def __init__(self, task_id, task_name, event_name, event_at, machine=None, result=None, error=None, tag=None,
